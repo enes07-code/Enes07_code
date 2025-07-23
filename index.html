@@ -1,116 +1,150 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Geri Sayım</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zıplayan Daire Oyunu</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      background-color: black;
-      color: white;
-      font-family: 'Arial Black', sans-serif;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      margin: 0;
       overflow: hidden;
+      background-color: #f0f0f0;
+      font-family: sans-serif;
     }
 
-    .container {
-      text-align: center;
-      animation: fadeIn 1s ease-in;
-    }
-
-    .explosion {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      animation: pulse 1s infinite;
-    }
-
-    .countdown {
-      font-size: 8rem;
+    #score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
       font-weight: bold;
-      animation: countdownPop 0.5s ease-in-out;
     }
 
-    .final-text {
-      font-size: 4rem;
-      font-weight: bold;
+    #gameOver {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
       color: red;
       display: none;
-      animation: boomText 1s ease-in-out forwards;
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.3);
-      }
+    #circle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: dodgerblue;
+      border-radius: 50%;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
-    @keyframes boomText {
-      0% {
-        transform: scale(0.2);
-        opacity: 0;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+    #ground {
+      position: absolute;
+      width: 100%;
+      height: 10px;
+      background-color: red;
+      bottom: 0;
+      left: 0;
     }
 
-    @keyframes countdownPop {
-      0% {
-        transform: scale(1.2);
-        opacity: 0;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+    #triangle {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 50px solid black;
+      bottom: 50px;
+      left: -60px;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    .jump {
+      animation: jump 0.5s ease-out;
+    }
+
+    @keyframes jump {
+      0% { bottom: 50px; }
+      50% { bottom: 200px; }
+      100% { bottom: 50px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="explosion">💥</div>
-    <div id="countdown" class="countdown">5</div>
-    <div id="final" class="final-text">ORTA BOMMM 💥</div>
-  </div>
 
-  <script>
-    let counter = 5;
-    const countdownEl = document.getElementById('countdown');
-    const finalText = document.getElementById('final');
+<div id="score">Kurtuldu: 0</div>
+<div id="gameOver">Kaybettin!</div>
+<div id="circle"></div>
+<div id="triangle"></div>
+<div id="ground"></div>
+
+<script>
+  const circle = document.getElementById("circle");
+  const triangle = document.getElementById("triangle");
+  const gameOver = document.getElementById("gameOver");
+  const scoreDisplay = document.getElementById("score");
+
+  let score = 0;
+  let isJumping = false;
+  let isGameOver = false;
+
+  // Zıplama fonksiyonu
+  document.body.addEventListener("click", () => {
+    if (isGameOver) return;
+
+    if (!isJumping) {
+      isJumping = true;
+      circle.classList.add("jump");
+      setTimeout(() => {
+        circle.classList.remove("jump");
+        isJumping = false;
+      }, 500);
+    }
+  });
+
+  // Üçgen hareket ettir
+  function moveTriangle() {
+    let pos = -60;
+    triangle.style.left = pos + "px";
 
     const interval = setInterval(() => {
-      counter--;
-      if (counter > 0) {
-        countdownEl.textContent = counter;
-      } else {
+      if (isGameOver) {
         clearInterval(interval);
-        countdownEl.style.display = 'none';
-        finalText.style.display = 'block';
+        return;
       }
-    }, 1000);
-  </script>
+
+      pos += 5;
+      triangle.style.left = pos + "px";
+
+      const triangleRect = triangle.getBoundingClientRect();
+      const circleRect = circle.getBoundingClientRect();
+
+      // Çarpışma kontrolü
+      if (
+        triangleRect.left < circleRect.right &&
+        triangleRect.right > circleRect.left &&
+        triangleRect.bottom > circleRect.top &&
+        triangleRect.top < circleRect.bottom
+      ) {
+        isGameOver = true;
+        gameOver.style.display = "block";
+        clearInterval(interval);
+      }
+
+      // Kurtuldu
+      if (pos > window.innerWidth) {
+        score++;
+        scoreDisplay.textContent = `Kurtuldu: ${score}`;
+        clearInterval(interval);
+        setTimeout(moveTriangle, 1000);
+      }
+    }, 20);
+  }
+
+  moveTriangle();
+</script>
+
 </body>
 </html>
