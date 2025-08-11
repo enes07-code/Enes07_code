@@ -1,150 +1,39 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Zıplayan Daire Oyunu</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background-color: #f0f0f0;
-      font-family: sans-serif;
-    }
-
-    #score {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    #gameOver {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 40px;
-      color: red;
-      display: none;
-    }
-
-    #circle {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      background-color: dodgerblue;
-      border-radius: 50%;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    #ground {
-      position: absolute;
-      width: 100%;
-      height: 10px;
-      background-color: red;
-      bottom: 0;
-      left: 0;
-    }
-
-    #triangle {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 30px solid transparent;
-      border-right: 30px solid transparent;
-      border-bottom: 50px solid black;
-      bottom: 50px;
-      left: -60px;
-    }
-
-    .jump {
-      animation: jump 0.5s ease-out;
-    }
-
-    @keyframes jump {
-      0% { bottom: 50px; }
-      50% { bottom: 200px; }
-      100% { bottom: 50px; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kedi Sayfası</title>
+<style>
+  body, html {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    font-family: Arial, sans-serif;
+  }
+  .text {
+    font-size: 24px;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #333;
+  }
+  img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>
 </head>
 <body>
 
-<div id="score">Kurtuldu: 0</div>
-<div id="gameOver">Kaybettin!</div>
-<div id="circle"></div>
-<div id="triangle"></div>
-<div id="ground"></div>
-
-<script>
-  const circle = document.getElementById("circle");
-  const triangle = document.getElementById("triangle");
-  const gameOver = document.getElementById("gameOver");
-  const scoreDisplay = document.getElementById("score");
-
-  let score = 0;
-  let isJumping = false;
-  let isGameOver = false;
-
-  // Zıplama fonksiyonu
-  document.body.addEventListener("click", () => {
-    if (isGameOver) return;
-
-    if (!isJumping) {
-      isJumping = true;
-      circle.classList.add("jump");
-      setTimeout(() => {
-        circle.classList.remove("jump");
-        isJumping = false;
-      }, 500);
-    }
-  });
-
-  // Üçgen hareket ettir
-  function moveTriangle() {
-    let pos = -60;
-    triangle.style.left = pos + "px";
-
-    const interval = setInterval(() => {
-      if (isGameOver) {
-        clearInterval(interval);
-        return;
-      }
-
-      pos += 5;
-      triangle.style.left = pos + "px";
-
-      const triangleRect = triangle.getBoundingClientRect();
-      const circleRect = circle.getBoundingClientRect();
-
-      // Çarpışma kontrolü
-      if (
-        triangleRect.left < circleRect.right &&
-        triangleRect.right > circleRect.left &&
-        triangleRect.bottom > circleRect.top &&
-        triangleRect.top < circleRect.bottom
-      ) {
-        isGameOver = true;
-        gameOver.style.display = "block";
-        clearInterval(interval);
-      }
-
-      // Kurtuldu
-      if (pos > window.innerWidth) {
-        score++;
-        scoreDisplay.textContent = `Kurtuldu: ${score}`;
-        clearInterval(interval);
-        setTimeout(moveTriangle, 1000);
-      }
-    }, 20);
-  }
-
-  moveTriangle();
-</script>
+<div class="text">Enes Baba Sunar ✨</div>
+<img src="https://i.imgur.com/JcpS4oC.jpg" alt="Sevimli Kedi" />
+<div class="text">Enes Baba Sunar ✨</div>
 
 </body>
 </html>
