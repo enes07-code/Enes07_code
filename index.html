@@ -7,7 +7,7 @@
 <style>
   body, html {
     margin: 0;
-    height: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -27,19 +27,35 @@
     height: auto;
     display: block;
   }
+  button {
+    margin: 20px 0;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
 
-<!-- Arka planda otomatik (sessiz) çalan müzik -->
-<audio autoplay loop muted>
+<div class="text">Enes Baba Sunar ✨</div>
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ36cqumWfnZAaoxmPlgrHQlNBuJ-jAwCESag&usqp=CAU" alt="Sevimli Kedi" />
+<div class="text">Enes Baba Sunar ✨</div>
+
+<button onclick="playMusic()">Müziği Başlat</button>
+
+<audio id="music" loop>
   <source src="audi.mp3" type="audio/mpeg">
   Tarayıcınız ses etiketini desteklemiyor.
 </audio>
 
-<div class="text">Enes Baba Sunar ✨</div>
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ36cqumWfnZAaoxmPlgrHQlNBuJ-jAwCESag&usqp=CAU" alt="Sevimli Kedi" />
-<div class="text">Enes Baba Sunar ✨</div>
+<script>
+  function playMusic() {
+    const music = document.getElementById('music');
+    music.play().catch(error => {
+      alert("Müziği çalarken bir sorun oluştu: " + error);
+    });
+  }
+</script>
 
 </body>
 </html>
