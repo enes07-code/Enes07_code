@@ -1,83 +1,59 @@
-<!DOCTYPE html>
-<html lang="tr">
+  <!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Site - HTML + CSS + JS</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #ffffff;
-      background: #0b132b
-        url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop')
-        center/cover fixed no-repeat;
-    }
-    header {
-      background: rgba(0,0,0,0.55);
-      position: sticky; top: 0;
-      backdrop-filter: blur(6px);
-    }
-    nav {
-      max-width: 1000px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 16px;
-    }
-    .logo { font-weight: 700; letter-spacing: 0.5px; }
-    nav ul { list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; }
-    nav a { color: #fff; text-decoration: none; padding: 8px 10px; border-radius: 8px; }
-    nav a:hover { background: rgba(255,255,255,0.15); }
-    .button {
-      border: none; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 600;
-    }
-    .button.primary { background: #00d1b2; color: #081c15; }
-    .button.primary:hover { filter: brightness(0.95); }
-    main { max-width: 1000px; margin: 48px auto; padding: 0 16px; text-align: center; }
-    .hero { padding: 56px 24px; background: rgba(0,0,0,0.45); border-radius: 16px; }
-    footer { text-align: center; padding: 24px; background: rgba(0,0,0,0.5); }
-
-    /* Karanlık tema */
-    .dark { background: #0f172a; color: #e5e7eb; }
-    .dark header { background: rgba(15,23,42,0.85); }
-    .dark nav a { color: #e5e7eb; }
-    .dark nav a:hover { background: rgba(255,255,255,0.08); }
-    .dark .hero, .dark footer { background: rgba(255,255,255,0.06); }
-  </style>
+<style>
+  body { display: flex; flex-direction: column; align-items: center; background: #222; color: white; font-family: sans-serif; }
+  #container { width: 300px; height: 400px; border: 2px solid #555; position: relative; overflow: hidden; margin-top: 50px; }
+  #speaker { position: absolute; bottom: 10px; right: 10px; font-size: 50px; }
+  .drop { position: absolute; width: 15px; height: 15px; background: #00ff00; border-radius: 50%; }
+  #vol-text { font-size: 24px; margin-top: 20px; }
+</style>
 </head>
 <body>
-  <header>
-    <nav>
-      <div class="logo">Akdeniz Tur</div>
-      <ul>
-        <li><a href="#">Ana Sayfa</a></li>
-        <li><a href="#">Hakkımızda</a></li>
-        <li><a href="#">Hizmetler</a></li>
-        <li><a href="#">İletişim</a></li>
-      </ul>
-      <button class="button primary" onclick="temaDegistir()">🐬</button>
-    </nav>
-  </header>
 
-  <main>
-    <section class="hero">
-      <h1>Hoş Geldin 👋</h1>
-      <p>En güzel tatil Akdeniz’de olur, Akdeniz Tur hizmetinizde.</p>
-      <!-- Butona tıklayınca başka site açılacak -->
-      <button class="button" onclick="siteAc('https://share.google/Yxd4595wNE2AzgRW0')">Tur Rezervasyon Et</button>
-    </section>
-  </main>
-
-  <footer>© Site 2000-2025 – tüm hakları Akdeniz Tur’a aittir.</footer>
+  <h2>Ses Seviyesi: <span id="val">0</span>%</h2>
+  <p>Butona basarak ses damlatın, hoparlöre isabet ettirmeye çalışın!</p>
+  
+  <div id="container">
+    <button onclick="createDrop()">SES DAMLAT</button>
+    <div id="speaker">🔊</div>
+  </div>
 
   <script>
-    function siteAc() {
-      // Mevcut sayfa kapanır ve yeni site açılır
-      window.location.href = '';
-    }
+    let volume = 0;
+    const container = document.getElementById('container');
+    const valDisplay = document.getElementById('val');
 
-    function temaDegistir() {
-      document.body.classList.toggle('dark');
+    function createDrop() {
+      const drop = document.createElement('div');
+      drop.className = 'drop';
+      drop.style.left = Math.random() * 50 + 'px';
+      drop.style.top = '40px';
+      container.appendChild(drop);
+
+      let pos = 40;
+      let horizontalPos = parseInt(drop.style.left);
+      
+      let fall = setInterval(() => {
+        pos += 5;
+        // Saçma bir rüzgar efekti ekleyelim ki isabet etmesin
+        horizontalPos += Math.random() * 4 - 1; 
+        drop.style.top = pos + 'px';
+        drop.style.left = horizontalPos + 'px';
+
+        // Hoparlöre çarptı mı?
+        if (pos > 340 && horizontalPos > 230) {
+          volume = Math.min(100, volume + 1);
+          valDisplay.innerText = volume;
+          clearInterval(fall);
+          drop.remove();
+        } 
+        // Yere mi düştü?
+        else if (pos > 400) {
+          clearInterval(fall);
+          drop.remove();
+        }
+      }, 30);
     }
   </script>
 </body>
